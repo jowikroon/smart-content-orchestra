@@ -14,6 +14,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
+import ContentGeneration from "./ContentGeneration";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -148,21 +149,27 @@ export default function Dashboard() {
         </header>
 
         {/* Content area */}
-        <main className="flex-1 p-6">
-          <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-              <Zap className="h-8 w-8 text-primary" />
+        <main className="flex-1 p-6 overflow-hidden">
+          {currentPath === "/dashboard/content" ? (
+            <ContentGeneration />
+          ) : (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+                <Zap className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Welcome to your dashboard</h2>
+              <p className="text-muted-foreground max-w-md mb-8">
+                {user?.email
+                  ? `Signed in as ${user.email}. Start by creating your first product content.`
+                  : "Start by creating your first product content."}
+              </p>
+              <Link to="/dashboard/content">
+                <Button className="gap-2">
+                  <FileText className="h-4 w-4" /> Create Content
+                </Button>
+              </Link>
             </div>
-            <h2 className="text-2xl font-bold mb-2">Welcome to your dashboard</h2>
-            <p className="text-muted-foreground max-w-md mb-8">
-              {user?.email
-                ? `Signed in as ${user.email}. Start by creating your first product content.`
-                : "Start by creating your first product content."}
-            </p>
-            <Button className="gap-2">
-              <FileText className="h-4 w-4" /> Create Content
-            </Button>
-          </div>
+          )}
         </main>
       </div>
     </div>
