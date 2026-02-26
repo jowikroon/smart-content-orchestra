@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          brand_language: string | null
+          brand_tone_keywords: string[] | null
+          brand_voice: string | null
+          created_at: string
+          desired_outcomes: string[] | null
+          display_name: string | null
+          id: string
+          onboarding_completed: boolean
+          primary_marketplace: string | null
+          product_category: string | null
+          product_description: string | null
+          product_features: string[] | null
+          product_name: string | null
+          target_age_range: string | null
+          target_markets: string[] | null
+          target_personas: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          brand_language?: string | null
+          brand_tone_keywords?: string[] | null
+          brand_voice?: string | null
+          created_at?: string
+          desired_outcomes?: string[] | null
+          display_name?: string | null
+          id?: string
+          onboarding_completed?: boolean
+          primary_marketplace?: string | null
+          product_category?: string | null
+          product_description?: string | null
+          product_features?: string[] | null
+          product_name?: string | null
+          target_age_range?: string | null
+          target_markets?: string[] | null
+          target_personas?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          brand_language?: string | null
+          brand_tone_keywords?: string[] | null
+          brand_voice?: string | null
+          created_at?: string
+          desired_outcomes?: string[] | null
+          display_name?: string | null
+          id?: string
+          onboarding_completed?: boolean
+          primary_marketplace?: string | null
+          product_category?: string | null
+          product_description?: string | null
+          product_features?: string[] | null
+          product_name?: string | null
+          target_age_range?: string | null
+          target_markets?: string[] | null
+          target_personas?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

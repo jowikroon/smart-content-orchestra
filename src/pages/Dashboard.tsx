@@ -39,10 +39,24 @@ export default function Dashboard() {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (!session?.user) {
+        setLoading(false);
+        navigate("/auth");
+        return;
+      }
+      // Check onboarding status
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (profile && !profile.onboarding_completed) {
+        navigate("/onboarding");
+      }
       setLoading(false);
-      if (!session?.user) navigate("/auth");
     });
 
     return () => subscription.unsubscribe();
