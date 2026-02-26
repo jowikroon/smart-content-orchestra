@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BarChart3, Bot, Globe, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, Bot, Globe, Zap, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import heroVisual from "@/assets/hero-visual.png";
 
 const features = [
@@ -67,6 +68,8 @@ const fadeUp = {
 };
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
@@ -80,14 +83,59 @@ export default function LandingPage() {
             <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/auth">
+            <Link to="/auth" className="hidden sm:inline-flex">
               <Button variant="ghost" size="sm">Log in</Button>
             </Link>
-            <Link to="/auth?tab=signup">
+            <Link to="/auth?tab=signup" className="hidden sm:inline-flex">
               <Button size="sm">Get Started</Button>
             </Link>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden border-t border-border overflow-hidden"
+            >
+              <div className="container mx-auto px-6 py-4 flex flex-col gap-3">
+                <a
+                  href="#features"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                >
+                  Features
+                </a>
+                <a
+                  href="#pricing"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                >
+                  Pricing
+                </a>
+                <div className="flex gap-3 pt-2 border-t border-border">
+                  <Link to="/auth" className="flex-1">
+                    <Button variant="outline" size="sm" className="w-full">Log in</Button>
+                  </Link>
+                  <Link to="/auth?tab=signup" className="flex-1">
+                    <Button size="sm" className="w-full">Get Started</Button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero */}
