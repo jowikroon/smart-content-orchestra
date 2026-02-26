@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      generated_content: {
+        Row: {
+          brand_voice: string | null
+          content: string
+          content_type: string
+          created_at: string
+          id: string
+          marketplace: string | null
+          product_description: string | null
+          product_features: string[] | null
+          product_name: string
+          target_audience: string | null
+          user_id: string
+        }
+        Insert: {
+          brand_voice?: string | null
+          content: string
+          content_type: string
+          created_at?: string
+          id?: string
+          marketplace?: string | null
+          product_description?: string | null
+          product_features?: string[] | null
+          product_name: string
+          target_audience?: string | null
+          user_id: string
+        }
+        Update: {
+          brand_voice?: string | null
+          content?: string
+          content_type?: string
+          created_at?: string
+          id?: string
+          marketplace?: string | null
+          product_description?: string | null
+          product_features?: string[] | null
+          product_name?: string
+          target_audience?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -79,6 +121,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      publications: {
+        Row: {
+          content_id: string
+          created_at: string
+          id: string
+          marketplace: string
+          published_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          id?: string
+          marketplace: string
+          published_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          id?: string
+          marketplace?: string
+          published_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publications_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "generated_content"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
