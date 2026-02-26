@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 import ContentGeneration from "./ContentGeneration";
+import PublishingPage from "./PublishingPage";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -152,6 +153,8 @@ export default function Dashboard() {
         <main className="flex-1 p-6 overflow-hidden">
           {currentPath === "/dashboard/content" ? (
             <ContentGeneration />
+          ) : currentPath === "/dashboard/publishing" ? (
+            <PublishingPage />
           ) : (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">

@@ -158,6 +158,25 @@ export default function ContentGeneration() {
           } catch { /* ignore */ }
         }
       }
+      // Save to database
+      if (content.trim()) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { error: saveErr } = await supabase.from("generated_content").insert({
+            user_id: user.id,
+            content_type: contentType,
+            product_name: productName.trim(),
+            product_description: productDescription.trim() || null,
+            product_features: productFeatures.length > 0 ? productFeatures : null,
+            target_audience: targetAudience.trim() || null,
+            brand_voice: brandVoice || null,
+            marketplace: marketplace || null,
+            content: content,
+          });
+          if (saveErr) console.error("Failed to save content:", saveErr);
+          else toast.success("Content saved automatically.");
+        }
+      }
     } catch (e: any) {
       console.error("Generation error:", e);
       toast.error("Failed to generate content. Please try again.");
