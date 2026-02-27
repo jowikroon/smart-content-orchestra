@@ -1,34 +1,54 @@
 
 
-# Improve Authentication: Forgot Password Flow and Google Login
+# Fix Google Login Redirect and Test Auth Flows
 
 ## Problem
-The current auth page has no "Forgot password" option, and the user reports that KeePassXC (a password manager) doesn't work well with Google OAuth login, so they need a reliable email/password alternative with full password reset capability.
+Two issues with the current authentication:
+1. **Google login gets stuck on loading spinner** -- After the Google OAuth redirect completes and returns to `/auth`, the page has no `onAuthStateChange` listener to detect the new session and redirect to the dashboard. The spinner just keeps spinning.
+2. **Console warning** -- React Router tries to pass a ref to `AuthPage` (a plain function component), causing a "Function components cannot be given refs" warning.
 
 ## Changes
 
-### 1. Add "Forgot Password" link to the login form
-- Add a "Forgot password?" link below the password field on the login view
-- Clicking it shows an inline forgot-password form (email input + submit) that calls `supabase.auth.resetPasswordForEmail()` with `redirectTo` pointing to `/reset-password`
+### 1. Add auth state listener to AuthPage
+Add a `useEffect` with `supabase.auth.onAuthStateChange` that:
+- Detects `SIGNED_IN` events (which fire after Google OAuth completes)
+- Redirects authenticated users to `/dashboard`
+- Also handles the case where the user navigates to `/auth` while already logged in
 
-### 2. Create a `/reset-password` page
-- New file: `src/pages/ResetPasswordPage.tsx`
-- Detects the `type=recovery` token in the URL hash (Supabase redirects here after the user clicks the reset email link)
-- Shows a "Set new password" form with password + confirm password fields
-- Calls `supabase.auth.updateUser({ password })` to save the new password
-- On success, redirects to `/dashboard`
+This is the core fix for the "Google login keeps loading" issue. When the OAuth flow redirects back, the auth state change fires `SIGNED_IN`, and the listener navigates to `/dashboard`.
 
-### 3. Register the new route
-- Add `<Route path="/reset-password" element={<ResetPasswordPage />} />` in `App.tsx`
+### 2. Reset Google loading state on mount
+Add logic to reset `googleLoading` to `false` when the component mounts, so if the user returns to the auth page after a failed OAuth attempt, they don't see a stale spinner.
 
-### 4. Improve Google login UX
-- Add a loading state to the Google button so users get feedback when clicked
-- Add `prompt: "select_account"` to the Google OAuth params so users can pick which Google account to use (helpful for password managers and multi-account setups)
+### 3. Test forgot password flow
+After fixing the Google login, manually verify:
+- Clicking "Forgot password?" shows the email-only form
+- Submitting an email calls the reset password API
+- The `/reset-password` page renders correctly
 
 ## Technical Details
 
-- The forgot password form will be a state toggle within `AuthPage.tsx` (login view -> forgot password view) to keep a single page
-- The reset password page will listen for `onAuthStateChange` with `PASSWORD_RECOVERY` event to detect when the recovery token is processed
-- All styling will match the existing auth page design (same branding panel, same layout)
-- No database changes needed -- this uses built-in authentication features
+The key addition to `AuthPage.tsx`:
+
+```typescript
+useEffect(() => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    (event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        navigate("/dashboard");
+      }
+    }
+  );
+  // Also check if already logged in
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) navigate("/dashboard");
+  });
+  return () => subscription.unsubscribe();
+}, [navigate]);
+```
+
+**Important**: The `onAuthStateChange` subscription is set up BEFORE the `getSession()` call, following best practices to avoid race conditions.
+
+### Files to modify
+- `src/pages/AuthPage.tsx` -- Add auth state listener and session check
 
