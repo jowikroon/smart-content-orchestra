@@ -6,7 +6,9 @@ import {
   Library,
   Send,
   BarChart3,
+  Brain,
   Plug,
+  ScrollText,
   Users,
   Shield,
   CreditCard,
@@ -41,6 +43,8 @@ const primaryItems = [
   { icon: Library, label: "Library", segment: "library" },
   { icon: Send, label: "Publish", segment: "publish" },
   { icon: BarChart3, label: "Insights", segment: "insights" },
+  { icon: ScrollText, label: "Logs", segment: "logs" },
+  { icon: Brain, label: "AI Hub", segment: "ai-hub" },
   { icon: Plug, label: "Integrations", segment: "integrations" },
 ];
 

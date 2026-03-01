@@ -11,6 +11,7 @@ const labelMap: Record<string, string> = {
   publish: "Publish",
   insights: "Insights",
   logs: "Logs",
+  "ai-hub": "AI Hub",
   integrations: "Integrations",
   members: "Members",
   roles: "Roles",
