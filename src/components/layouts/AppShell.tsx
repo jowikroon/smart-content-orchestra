@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { WorkspaceProvider } from "@/hooks/use-workspace";
 import AppSidebar from "@/components/app/AppSidebar";
 import WorkspaceSwitcher from "@/components/app/WorkspaceSwitcher";
+import UserMenu from "@/components/app/UserMenu";
 import CommandPalette from "@/components/app/CommandPalette";
 import { Link } from "react-router-dom";
 
@@ -20,6 +21,9 @@ export default function AppShell() {
               </Link>
               <div className="h-5 w-px bg-border" />
               <WorkspaceSwitcher />
+              <div className="ml-auto">
+                <UserMenu />
+              </div>
             </header>
             <main className="flex-1 overflow-auto p-6">
               <Outlet />
