@@ -14,6 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      brands: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          rules_donts: string[] | null
+          rules_dos: string[] | null
+          rules_grammar_notes: string | null
+          templates: Json | null
+          updated_at: string
+          voice_examples: string | null
+          voice_keywords: string[] | null
+          voice_language: string | null
+          voice_personality: string | null
+          voice_tone: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          rules_donts?: string[] | null
+          rules_dos?: string[] | null
+          rules_grammar_notes?: string | null
+          templates?: Json | null
+          updated_at?: string
+          voice_examples?: string | null
+          voice_keywords?: string[] | null
+          voice_language?: string | null
+          voice_personality?: string | null
+          voice_tone?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          rules_donts?: string[] | null
+          rules_dos?: string[] | null
+          rules_grammar_notes?: string | null
+          templates?: Json | null
+          updated_at?: string
+          voice_examples?: string | null
+          voice_keywords?: string[] | null
+          voice_language?: string | null
+          voice_personality?: string | null
+          voice_tone?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brands_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       generated_content: {
         Row: {
           brand_voice: string | null
