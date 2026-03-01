@@ -54,6 +54,7 @@ import PublishChannelsPage from "@/pages/app/workspace/PublishChannelsPage";
 import ChannelDetailPage from "@/pages/app/workspace/ChannelDetailPage";
 import InsightsPage from "@/pages/app/workspace/InsightsPage";
 import LogsPage from "@/pages/app/workspace/LogsPage";
+import AIHubPage from "@/pages/app/workspace/AIHubPage";
 import IntegrationsPage from "@/pages/app/workspace/IntegrationsPage";
 import ConnectorsPage from "@/pages/app/workspace/ConnectorsPage";
 import WebhooksPage from "@/pages/app/workspace/WebhooksPage";
@@ -138,6 +139,7 @@ const App = () => (
                 </Route>
                 <Route path="insights" element={<InsightsPage />} />
                 <Route path="logs" element={<LogsPage />} />
+                <Route path="ai-hub" element={<AIHubPage />} />
                 <Route path="integrations" element={<IntegrationsPage />}>
                   <Route path="connectors" element={<ConnectorsPage />} />
                   <Route path="webhooks" element={<WebhooksPage />} />
