@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +69,7 @@ type Publication = {
 };
 
 export default function PublishingPage() {
+  const { currentWorkspace } = useWorkspace();
   const [content, setContent] = useState<ContentItem[]>([]);
   const [publications, setPublications] = useState<Publication[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -76,24 +78,24 @@ export default function PublishingPage() {
   const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (currentWorkspace) loadData();
+  }, [currentWorkspace]);
 
   const loadData = async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user || !currentWorkspace) return;
 
     const [contentRes, pubRes] = await Promise.all([
       supabase
         .from("generated_content")
         .select("id, content_type, product_name, content, marketplace, created_at")
-        .eq("user_id", user.id)
+        .eq("workspace_id", currentWorkspace.id)
         .order("created_at", { ascending: false }),
       supabase
         .from("publications")
         .select("id, content_id, marketplace, status, published_at, created_at")
-        .eq("user_id", user.id)
+        .eq("workspace_id", currentWorkspace.id)
         .order("created_at", { ascending: false }),
     ]);
 
@@ -123,6 +125,7 @@ export default function PublishingPage() {
 
     const rows = Array.from(selectedIds).map((content_id) => ({
       user_id: user.id,
+      workspace_id: currentWorkspace?.id ?? null,
       content_id,
       marketplace: publishMarketplace,
       status: "published",

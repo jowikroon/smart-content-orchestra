@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +27,7 @@ const CONTENT_TYPES = [
 const GENERATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-content`;
 
 export default function ContentGeneration() {
+  const { currentWorkspace } = useWorkspace();
   const [contentType, setContentType] = useState("product_listing");
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -164,6 +166,7 @@ export default function ContentGeneration() {
         if (user) {
           const { error: saveErr } = await supabase.from("generated_content").insert({
             user_id: user.id,
+            workspace_id: currentWorkspace?.id ?? null,
             content_type: contentType,
             product_name: productName.trim(),
             product_description: productDescription.trim() || null,

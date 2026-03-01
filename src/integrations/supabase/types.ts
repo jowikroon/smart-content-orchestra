@@ -27,6 +27,7 @@ export type Database = {
           product_name: string
           target_audience: string | null
           user_id: string
+          workspace_id: string | null
         }
         Insert: {
           brand_voice?: string | null
@@ -40,6 +41,7 @@ export type Database = {
           product_name: string
           target_audience?: string | null
           user_id: string
+          workspace_id?: string | null
         }
         Update: {
           brand_voice?: string | null
@@ -53,8 +55,17 @@ export type Database = {
           product_name?: string
           target_audience?: string | null
           user_id?: string
+          workspace_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "generated_content_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -132,6 +143,7 @@ export type Database = {
           status: string
           updated_at: string
           user_id: string
+          workspace_id: string | null
         }
         Insert: {
           content_id: string
@@ -142,6 +154,7 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id: string
+          workspace_id?: string | null
         }
         Update: {
           content_id?: string
@@ -152,6 +165,7 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -159,6 +173,13 @@ export type Database = {
             columns: ["content_id"]
             isOneToOne: false
             referencedRelation: "generated_content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "publications_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -221,7 +242,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_workspace_member: {
+        Args: { _user_id: string; _workspace_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
