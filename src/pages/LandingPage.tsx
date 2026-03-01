@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BarChart3, Bot, Globe, Zap, Menu, X } from "lucide-react";
+import { ArrowRight, BarChart3, Bot, Globe, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import heroVisual from "@/assets/hero-visual.png";
 
 const features = [
@@ -68,78 +67,10 @@ const fadeUp = {
 };
 
 export default function LandingPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass">
-        <div className="container mx-auto flex h-16 items-center justify-between px-6">
-          <Link to="/" className="text-lg font-bold tracking-tight">
-            marketplace<span className="text-gradient">growth</span>.nl
-          </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-            <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link to="/auth" className="hidden sm:inline-flex">
-              <Button variant="ghost" size="sm">Log in</Button>
-            </Link>
-            <Link to="/auth?tab=signup" className="hidden sm:inline-flex">
-              <Button size="sm">Get Started</Button>
-            </Link>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden border-t border-border overflow-hidden"
-            >
-              <div className="container mx-auto px-6 py-4 flex flex-col gap-3">
-                <a
-                  href="#features"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                >
-                  Features
-                </a>
-                <a
-                  href="#pricing"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                >
-                  Pricing
-                </a>
-                <div className="flex gap-3 pt-2 border-t border-border">
-                  <Link to="/auth" className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full">Log in</Button>
-                  </Link>
-                  <Link to="/auth?tab=signup" className="flex-1">
-                    <Button size="sm" className="w-full">Get Started</Button>
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
-
+    <>
       {/* Hero */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
+      <section className="relative pt-16 pb-20 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(142_70%_49%/0.08),transparent_60%)]" />
         <div className="container mx-auto px-6 relative">
           <motion.div
@@ -174,7 +105,6 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* Hero image */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -275,20 +205,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border py-12">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-sm text-muted-foreground">
-            © 2026 marketplacegrowth.nl — All rights reserved.
-          </span>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }

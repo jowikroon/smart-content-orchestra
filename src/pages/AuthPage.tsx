@@ -24,12 +24,12 @@ export default function AuthPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === "SIGNED_IN" && session) {
-          navigate("/dashboard");
+          navigate("/app");
         }
       }
     );
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/dashboard");
+      if (session) navigate("/app");
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
@@ -57,7 +57,7 @@ export default function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate("/dashboard");
+        navigate("/app");
       }
     } catch (error: any) {
       toast.error(error.message);
