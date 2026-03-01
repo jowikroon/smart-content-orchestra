@@ -169,7 +169,7 @@ export default function OnboardingPage() {
 
       if (error) throw error;
       toast.success("Setup complete! Welcome aboard.");
-      navigate("/dashboard");
+      navigate("/app");
     } catch (err: any) {
       toast.error(err.message || "Failed to save. Please try again.");
     } finally {
