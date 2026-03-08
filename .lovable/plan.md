@@ -1,49 +1,40 @@
 
 
-# App Pages Export for Claude Desktop
+# Add User Menu to App Header
 
-I have thoroughly reviewed every page behind the login wall. Here is the plan:
+## Overview
+Add a user avatar + name dropdown in the top-right corner of the app header, with profile link, settings, and logout. The user's display name and avatar come from the existing `profiles` table (which already has `display_name` and `avatar_url` columns).
 
-**Create a single file `docs/app-pages-export.md`** containing a comprehensive specification of every authenticated page in the application. This document will cover:
+## Changes
 
-- **Routing structure** (all `/app/*` routes)
-- **Shared infrastructure** (AppShell, Sidebar, Breadcrumbs, CommandPalette, UserMenu, WorkspaceSwitcher, RequireAuth, useWorkspace hook)
-- **Every page** with: title, subtitle, route, layout description, UI elements, icons used, data sources, working functionality vs stub status
-- **Database schema** for tables used (brands, generated_content, publications, workspaces, workspace_members, profiles)
-- **Edge function** (generate-content) specification
-- **Auth flow** (AuthPage, ResetPasswordPage, Google OAuth)
-- **Onboarding flow** (4-step wizard)
+### 1. Create UserMenu component
+**New file**: `src/components/app/UserMenu.tsx`
 
-The document explicitly notes: **Do NOT modify any public/marketing pages or the homepage. Only recreate the authenticated app pages.**
+- Fetches the current user's profile (`display_name`, `avatar_url`) from the `profiles` table on mount
+- Renders an Avatar (with image or initials fallback) + display name (or email fallback)
+- Uses shadcn `DropdownMenu` with items:
+  - **Profile Settings** -- navigates to `/app/settings/profile`
+  - **Help** -- navigates to `/app/help`
+  - Separator
+  - **Log Out** -- calls `supabase.auth.signOut()` and navigates to `/`
+- Subscribes to `onAuthStateChange` so the avatar updates if the user re-authenticates
 
-Pages covered (30+ pages):
-1. **Auth** - AuthPage, ResetPasswordPage
-2. **Onboarding** - 4-step wizard (Product, Audience, Voice, Goals)
-3. **App Entry** - redirect logic
-4. **Workspaces** - list + create
-5. **Overview** - stats row, quick actions, activity feed
-6. **Brands** - list, create form, detail page with 4 tabs (Overview, Voice, Rules, Templates)
-7. **Projects** - list + stub sub-sections
-8. **Create** - AI content generation (working, streams from edge function)
-9. **Library** - 4 sub-section cards (stub)
-10. **Publish** - working publishing flow + capability cards
-11. **Insights** - 4 sub-section cards (stub)
-12. **Logs** - stub
-13. **AI Hub** - 4 sub-section cards (stub)
-14. **Integrations** - index with 3 sub-routes (Connectors, Webhooks, API Keys)
-15. **Members** - 2 sub-section cards (stub)
-16. **Roles** - stub
-17. **Billing** - 3 sub-section cards (stub)
-18. **Audit Log** - 3 sub-section cards (stub)
-19. **Settings** - 4 sub-section cards (stub)
-20. **Usage** - stub
-21. **Profile Settings** - working form (display name, avatar URL)
-22. **Help, Changelog, Status** - stubs
-23. **Sub-pages**: CreateBulk, CreateTemplates, AssetDetail, PublishJob, PublishChannels, ChannelDetail, ProjectNew, ProjectDetail
+### 2. Update AppShell header
+**Edit**: `src/components/layouts/AppShell.tsx`
 
-## Files to Create
-- `docs/app-pages-export.md` — single comprehensive export file
+- Import and render `<UserMenu />` in the header, pushed to the right with `ml-auto`
+- The header becomes: `SidebarTrigger | Logo | Divider | WorkspaceSwitcher | ... spacer ... | UserMenu`
 
-## Files to Edit
-None. This is a documentation-only output.
+### 3. Enhance ProfileSettingsPage
+**Edit**: `src/pages/app/ProfileSettingsPage.tsx`
 
+- Replace the "coming soon" stub with a working form
+- Fields: Display Name, Avatar URL (text input for now)
+- Loads current profile on mount, saves via `supabase.from('profiles').update()`
+- Success toast on save
+
+## Technical Notes
+- No database changes needed -- `profiles.display_name` and `profiles.avatar_url` already exist
+- No new dependencies -- uses existing shadcn Avatar, DropdownMenu components
+- The user object is available from `supabase.auth.getUser()` (already used elsewhere)
+- Persistent login is already handled by `RequireAuth` + Supabase's `persistSession: true` config
