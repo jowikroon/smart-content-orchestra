@@ -800,3 +800,221 @@ export default function PageName() {
 - All colors use semantic tokens: `text-primary`, `text-muted-foreground`, `bg-primary/10`, `border-primary/30`, `bg-card`, `bg-background`, `border-border`, `text-foreground`, `text-destructive`
 - Gradient text class: `.text-gradient` (defined in CSS)
 - Active nav: `bg-sidebar-accent text-sidebar-accent-foreground`
+
+---
+
+## Design Tokens — index.css
+
+Copy this file as `src/index.css` in the new repo. This is the complete design system.
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 14% 4%;
+    --foreground: 210 20% 95%;
+
+    --card: 220 13% 8%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 220 13% 8%;
+    --popover-foreground: 210 20% 95%;
+
+    --primary: 142 70% 49%;
+    --primary-foreground: 220 14% 4%;
+
+    --secondary: 220 13% 14%;
+    --secondary-foreground: 210 20% 85%;
+
+    --muted: 220 13% 12%;
+    --muted-foreground: 215 14% 55%;
+
+    --accent: 220 13% 14%;
+    --accent-foreground: 210 20% 90%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 13% 16%;
+    --input: 220 13% 16%;
+    --ring: 142 70% 49%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 14% 6%;
+    --sidebar-foreground: 210 20% 85%;
+    --sidebar-primary: 142 70% 49%;
+    --sidebar-primary-foreground: 220 14% 4%;
+    --sidebar-accent: 220 13% 12%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 220 13% 14%;
+    --sidebar-ring: 142 70% 49%;
+
+    /* Custom tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(142 70% 49%), hsl(160 70% 40%));
+    --gradient-hero: linear-gradient(180deg, hsl(220 14% 4%) 0%, hsl(220 14% 8%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(220 13% 10%), hsl(220 13% 8%));
+    --gradient-glow: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(142 70% 49% / 0.06), transparent 40%);
+    --shadow-glow: 0 0 40px -10px hsl(142 70% 49% / 0.3);
+    --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.3);
+  }
+
+  .dark {
+    /* Same as root - dark by default */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  .glow-border {
+    @apply border border-primary/20;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glass {
+    @apply bg-card/80 backdrop-blur-xl border border-border;
+  }
+}
+```
+
+---
+
+## Tailwind Config — tailwind.config.ts
+
+Copy this file as `tailwind.config.ts` in the new repo.
+
+```ts
+import type { Config } from "tailwindcss";
+
+export default {
+  darkMode: ["class"],
+  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  prefix: "",
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
+      },
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(20px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-up": "fade-up 0.6s ease-out forwards",
+        "fade-in": "fade-in 0.4s ease-out forwards",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config;
+```
+
+### Visual Direction Summary
+- **Aesthetic**: Dark premium "Linear-style"
+- **Primary accent**: Emerald green (`142 70% 49%`)
+- **Background**: Near-black (`220 14% 4%`)
+- **Cards**: Slightly lighter dark (`220 13% 8%`)
+- **Fonts**: Inter (headings/body), JetBrains Mono (technical/mono)
+- **Effects**: Glassmorphism (`.glass`), glow borders (`.glow-border`), gradient text (`.text-gradient`)
+- **Dark by default**: No light mode — `:root` IS the dark theme
