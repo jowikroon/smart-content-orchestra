@@ -42,30 +42,69 @@ Format with clear markdown headings.`,
 Format with clear markdown headings.`,
 };
 
+function normalizeCreativeLevel(value: unknown): number {
+  if (typeof value !== "number" || Number.isNaN(value)) return 3;
+  return Math.max(1, Math.min(5, Math.round(value)));
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { contentType, productName, productDescription, productFeatures, targetAudience, brandVoice, marketplace } =
-      await req.json();
+    const {
+      contentType,
+      productName,
+      productDescription,
+      productFeatures,
+      targetAudience,
+      brandVoice,
+      marketplace,
+      objective,
+      creativeLevel,
+    } = await req.json();
+
+    if (!productName || typeof productName !== "string") {
+      return new Response(JSON.stringify({ error: "Product name is required." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const systemPrompt = CONTENT_TYPE_PROMPTS[contentType] || CONTENT_TYPE_PROMPTS.product_listing;
+    const creativity = normalizeCreativeLevel(creativeLevel);
 
     const userPrompt = `Generate content for the following product:
 
 **Product Name:** ${productName}
 **Description:** ${productDescription || "Not provided"}
-**Key Features:** ${productFeatures?.length ? productFeatures.join(", ") : "Not provided"}
+**Key Features:** ${Array.isArray(productFeatures) && productFeatures.length ? productFeatures.join(", ") : "Not provided"}
 **Target Audience:** ${targetAudience || "General consumers"}
 **Brand Voice:** ${brandVoice || "Professional"}
 **Marketplace:** ${marketplace || "Amazon"}
+**Campaign Objective:** ${objective || "Increase conversion rate"}
+**Creative Level (1-5):** ${creativity}
+
+Instructions:
+- Keep output practical and ready to paste into marketplaces.
+- Maintain consistency with selected voice and objective.
+- If assumptions are needed, state them briefly in a final "Assumptions" section.
 
 Please generate the content now.`;
+
+    const aiPayload = {
+      model: "google/gemini-3-flash-preview",
+      temperature: 0.3 + creativity * 0.12,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      stream: true,
+    };
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -73,14 +112,7 @@ Please generate the content now.`;
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        stream: true,
-      }),
+      body: JSON.stringify(aiPayload),
     });
 
     if (!response.ok) {
@@ -96,6 +128,7 @@ Please generate the content now.`;
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
       return new Response(JSON.stringify({ error: "AI service error. Please try again." }), {
@@ -104,14 +137,31 @@ Please generate the content now.`;
       });
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+    const contentTypeHeader = response.headers.get("content-type") || "";
+    if (contentTypeHeader.includes("text/event-stream")) {
+      return new Response(response.body, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      });
+    }
+
+    const payload = await response.json();
+    const content = payload?.choices?.[0]?.message?.content;
+    if (typeof content !== "string" || !content.trim()) {
+      return new Response(JSON.stringify({ error: "AI response was empty. Please retry." }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(JSON.stringify({ content }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("generate-content error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 });
