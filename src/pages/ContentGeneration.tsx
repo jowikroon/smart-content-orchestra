@@ -6,23 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
+import { FileText, Sparkles, Loader2, Copy, Check, X, RotateCcw, WandSparkles } from "lucide-react";
 import {
-  FileText,
-  Sparkles,
-  Loader2,
-  Copy,
-  Check,
-  X,
-  RotateCcw,
-} from "lucide-react";
-
-const CONTENT_TYPES = [
-  { value: "product_listing", label: "Product Listing", desc: "Title, bullets, description, keywords" },
-  { value: "a_plus_content", label: "A+ Content", desc: "Brand story, feature modules, comparison" },
-  { value: "seo_description", label: "SEO Description", desc: "Meta tags, long description, keywords" },
-  { value: "social_ad", label: "Social Ad Copy", desc: "Headlines, ad text, CTA suggestions" },
-];
+  BRAND_VOICE_OPTIONS,
+  CONTENT_TYPES,
+  GENERATION_PRESETS,
+  MARKETPLACE_OPTIONS,
+  dedupeAndLimitFeatures,
+  normalizeCreativeLevel,
+} from "@/lib/content-generation";
 
 const GENERATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-content`;
 
@@ -34,17 +28,20 @@ export default function ContentGeneration() {
   const [featureInput, setFeatureInput] = useState("");
   const [productFeatures, setProductFeatures] = useState<string[]>([]);
   const [targetAudience, setTargetAudience] = useState("");
-  const [brandVoice, setBrandVoice] = useState("");
-  const [marketplace, setMarketplace] = useState("");
+  const [brandVoice, setBrandVoice] = useState("Professional");
+  const [marketplace, setMarketplace] = useState("Amazon");
+  const [objective, setObjective] = useState("Increase conversion with premium positioning");
+  const [creativeLevel, setCreativeLevel] = useState(3);
   const [generatedContent, setGeneratedContent] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
 
-  // Load profile defaults
   useEffect(() => {
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
       const { data: profile } = await supabase
         .from("profiles")
@@ -54,7 +51,7 @@ export default function ContentGeneration() {
       if (profile) {
         if (profile.product_name) setProductName(profile.product_name);
         if (profile.product_description) setProductDescription(profile.product_description);
-        if (profile.product_features) setProductFeatures(profile.product_features);
+        if (profile.product_features) setProductFeatures(dedupeAndLimitFeatures(profile.product_features));
         if (profile.brand_voice) setBrandVoice(profile.brand_voice);
         if (profile.target_personas) setTargetAudience(profile.target_personas.join(", "));
         if (profile.primary_marketplace) setMarketplace(profile.primary_marketplace);
@@ -62,12 +59,22 @@ export default function ContentGeneration() {
     })();
   }, []);
 
+  const applyPreset = (presetId: string) => {
+    const preset = GENERATION_PRESETS.find((item) => item.id === presetId);
+    if (!preset) return;
+    setObjective(preset.objective);
+    setBrandVoice(preset.brandVoice);
+    setMarketplace(preset.marketplace);
+    setTargetAudience(preset.targetAudience);
+    setProductFeatures(dedupeAndLimitFeatures([...productFeatures, ...preset.features]));
+    toast.success(`Applied preset: ${preset.label}`);
+  };
+
   const addFeature = () => {
-    const trimmed = featureInput.trim();
-    if (trimmed && !productFeatures.includes(trimmed) && productFeatures.length < 10) {
-      setProductFeatures([...productFeatures, trimmed]);
-      setFeatureInput("");
-    }
+    const next = dedupeAndLimitFeatures([...productFeatures, featureInput]);
+    if (next.length === productFeatures.length) return;
+    setProductFeatures(next);
+    setFeatureInput("");
   };
 
   const handleGenerate = async () => {
@@ -94,6 +101,8 @@ export default function ContentGeneration() {
           targetAudience: targetAudience.trim(),
           brandVoice,
           marketplace,
+          objective: objective.trim(),
+          creativeLevel: normalizeCreativeLevel(creativeLevel),
         }),
       });
 
@@ -104,65 +113,56 @@ export default function ContentGeneration() {
         return;
       }
 
-      if (!resp.body) throw new Error("No response body");
+      const contentTypeHeader = resp.headers.get("content-type") || "";
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
       let content = "";
+      if (!contentTypeHeader.includes("text/event-stream")) {
+        const payload = await resp.json();
+        content = payload.content || "";
+        setGeneratedContent(content);
+      } else {
+        if (!resp.body) throw new Error("No response body");
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
 
-        let newlineIndex: number;
-        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, newlineIndex);
-          buffer = buffer.slice(newlineIndex + 1);
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
 
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
-          if (!line.startsWith("data: ")) continue;
+          let newlineIndex: number;
+          while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+            let line = buffer.slice(0, newlineIndex);
+            buffer = buffer.slice(newlineIndex + 1);
 
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") break;
+            if (line.endsWith("\r")) line = line.slice(0, -1);
+            if (line.startsWith(":") || line.trim() === "") continue;
+            if (!line.startsWith("data: ")) continue;
 
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const delta = parsed.choices?.[0]?.delta?.content;
-            if (delta) {
-              content += delta;
-              setGeneratedContent(content);
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr === "[DONE]") break;
+
+            try {
+              const parsed = JSON.parse(jsonStr);
+              const delta = parsed.choices?.[0]?.delta?.content;
+              if (delta) {
+                content += delta;
+                setGeneratedContent(content);
+              }
+            } catch {
+              buffer = line + "\n" + buffer;
+              break;
             }
-          } catch {
-            buffer = line + "\n" + buffer;
-            break;
           }
         }
       }
 
-      // Flush remaining
-      if (buffer.trim()) {
-        for (let raw of buffer.split("\n")) {
-          if (!raw) continue;
-          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
-          if (!raw.startsWith("data: ")) continue;
-          const jsonStr = raw.slice(6).trim();
-          if (jsonStr === "[DONE]") continue;
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const delta = parsed.choices?.[0]?.delta?.content;
-            if (delta) {
-              content += delta;
-              setGeneratedContent(content);
-            }
-          } catch { /* ignore */ }
-        }
-      }
-      // Save to database
       if (content.trim()) {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) {
           const { error: saveErr } = await supabase.from("generated_content").insert({
             user_id: user.id,
@@ -174,13 +174,13 @@ export default function ContentGeneration() {
             target_audience: targetAudience.trim() || null,
             brand_voice: brandVoice || null,
             marketplace: marketplace || null,
-            content: content,
+            content,
           });
           if (saveErr) console.error("Failed to save content:", saveErr);
           else toast.success("Content saved automatically.");
         }
       }
-    } catch (e: any) {
+    } catch (e) {
       console.error("Generation error:", e);
       toast.error("Failed to generate content. Please try again.");
     } finally {
@@ -195,7 +195,6 @@ export default function ContentGeneration() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Auto-scroll output
   useEffect(() => {
     if (outputRef.current && isGenerating) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
@@ -204,16 +203,31 @@ export default function ContentGeneration() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-full">
-      {/* Input panel */}
-      <div className="lg:w-[400px] shrink-0 space-y-5">
+      <div className="lg:w-[440px] shrink-0 space-y-5">
         <div>
           <h2 className="text-xl font-bold mb-1">Generate Content</h2>
-          <p className="text-sm text-muted-foreground">
-            Fill in your product details and let AI create optimized content.
-          </p>
+          <p className="text-sm text-muted-foreground">Dial in your offer and generate high-converting marketplace copy.</p>
         </div>
 
-        {/* Content type */}
+        <div className="space-y-2">
+          <Label htmlFor="preset">Go-to-market preset</Label>
+          <select
+            id="preset"
+            className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+            onChange={(e) => applyPreset(e.target.value)}
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Apply a preset template...
+            </option>
+            {GENERATION_PRESETS.map((preset) => (
+              <option key={preset.id} value={preset.id}>
+                {preset.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="space-y-2">
           <Label>Content Type</Label>
           <div className="grid grid-cols-2 gap-2">
@@ -222,46 +236,59 @@ export default function ContentGeneration() {
                 key={ct.value}
                 onClick={() => setContentType(ct.value)}
                 className={`rounded-lg border p-3 text-left transition-colors ${
-                  contentType === ct.value
-                    ? "border-primary bg-primary/10"
-                    : "border-border hover:border-primary/30"
+                  contentType === ct.value ? "border-primary bg-primary/10" : "border-border hover:border-primary/30"
                 }`}
               >
-                <span className={`text-xs font-medium ${contentType === ct.value ? "text-primary" : ""}`}>
-                  {ct.label}
-                </span>
+                <span className={`text-xs font-medium ${contentType === ct.value ? "text-primary" : ""}`}>{ct.label}</span>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{ct.desc}</p>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Product name */}
         <div className="space-y-2">
           <Label htmlFor="pName">Product Name *</Label>
-          <Input
-            id="pName"
-            placeholder="e.g. EcoSmart Water Bottle"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-            maxLength={100}
-          />
+          <Input id="pName" placeholder="e.g. EcoSmart Water Bottle" value={productName} onChange={(e) => setProductName(e.target.value)} maxLength={100} />
         </div>
 
-        {/* Description */}
         <div className="space-y-2">
           <Label htmlFor="pDesc">Description</Label>
-          <Textarea
-            id="pDesc"
-            placeholder="Describe your product..."
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
-            maxLength={1000}
-            rows={3}
-          />
+          <Textarea id="pDesc" placeholder="Describe your product..." value={productDescription} onChange={(e) => setProductDescription(e.target.value)} maxLength={1000} rows={3} />
         </div>
 
-        {/* Features */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label htmlFor="voice">Brand Voice</Label>
+            <select id="voice" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" value={brandVoice} onChange={(e) => setBrandVoice(e.target.value)}>
+              {BRAND_VOICE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="marketplace">Marketplace</Label>
+            <select id="marketplace" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" value={marketplace} onChange={(e) => setMarketplace(e.target.value)}>
+              {MARKETPLACE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="objective">Campaign Objective</Label>
+          <Input id="objective" value={objective} onChange={(e) => setObjective(e.target.value)} maxLength={160} placeholder="e.g. drive new customer trials" />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Creative Level ({creativeLevel}/5)</Label>
+          <Slider value={[creativeLevel]} min={1} max={5} step={1} onValueChange={(value) => setCreativeLevel(value[0] ?? 3)} />
+        </div>
+
         <div className="space-y-2">
           <Label>Key Features</Label>
           <div className="flex gap-2">
@@ -270,11 +297,16 @@ export default function ContentGeneration() {
               value={featureInput}
               onChange={(e) => setFeatureInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") { e.preventDefault(); addFeature(); }
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addFeature();
+                }
               }}
               maxLength={80}
             />
-            <Button variant="outline" size="sm" onClick={addFeature}>Add</Button>
+            <Button variant="outline" size="sm" onClick={addFeature}>
+              Add
+            </Button>
           </div>
           {productFeatures.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
@@ -290,34 +322,24 @@ export default function ContentGeneration() {
           )}
         </div>
 
-        {/* Target audience */}
         <div className="space-y-2">
           <Label htmlFor="audience">Target Audience</Label>
-          <Input
-            id="audience"
-            placeholder="e.g. Health-conscious millennials"
-            value={targetAudience}
-            onChange={(e) => setTargetAudience(e.target.value)}
-            maxLength={100}
-          />
+          <Input id="audience" placeholder="e.g. Health-conscious millennials" value={targetAudience} onChange={(e) => setTargetAudience(e.target.value)} maxLength={100} />
         </div>
 
-        {/* Generate button */}
-        <Button
-          onClick={handleGenerate}
-          disabled={isGenerating || !productName.trim()}
-          className="w-full gap-2"
-          size="lg"
-        >
+        <Button onClick={handleGenerate} disabled={isGenerating || !productName.trim()} className="w-full gap-2" size="lg">
           {isGenerating ? (
-            <><Loader2 className="h-4 w-4 animate-spin" /> Generating...</>
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" /> Generating...
+            </>
           ) : (
-            <><Sparkles className="h-4 w-4" /> Generate Content</>
+            <>
+              <WandSparkles className="h-4 w-4" /> Launch God Mode
+            </>
           )}
         </Button>
       </div>
 
-      {/* Output panel */}
       <div className="flex-1 min-w-0 flex flex-col">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -337,24 +359,17 @@ export default function ContentGeneration() {
           )}
         </div>
 
-        <div
-          ref={outputRef}
-          className="flex-1 rounded-xl border border-border bg-card p-6 overflow-y-auto min-h-[400px]"
-        >
+        <div ref={outputRef} className="flex-1 rounded-xl border border-border bg-card p-6 overflow-y-auto min-h-[400px]">
           {generatedContent ? (
-            <div className="prose prose-invert prose-sm max-w-none whitespace-pre-wrap">
-              {generatedContent}
-            </div>
+            <div className="prose prose-invert prose-sm max-w-none whitespace-pre-wrap">{generatedContent}</div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
               <Sparkles className="h-10 w-10 mb-4 opacity-30" />
               <p className="text-sm">Your AI-generated content will appear here.</p>
-              <p className="text-xs mt-1">Fill in your product details and click Generate.</p>
+              <p className="text-xs mt-1">Apply a preset, tweak controls, and click Launch God Mode.</p>
             </div>
           )}
-          {isGenerating && (
-            <span className="inline-block w-2 h-5 bg-primary animate-pulse ml-0.5" />
-          )}
+          {isGenerating && <span className="inline-block w-2 h-5 bg-primary animate-pulse ml-0.5" />}
         </div>
       </div>
     </div>
