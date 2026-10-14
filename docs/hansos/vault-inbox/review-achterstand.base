@@ -1,0 +1,73 @@
+# Bestemming: _meta/review-achterstand.base  (Obsidian Bases, kern-plugin, 1.14+)
+# Curate-lijst: wat wacht op Hans. Bronnen zonder review, pagina's >60 dagen niet beoordeeld, header-gaps.
+filters:
+  and:
+    - file.inFolder("wiki")
+    - file.ext == "md"
+formulas:
+  dagen_sinds_review: 'if(note.last_reviewed, (today() - date(note.last_reviewed)).days, "")'
+  header_gap: 'if(!note.created || !note.status || !note.type, "ja", "")'
+properties:
+  note.created:
+    displayName: Aangemaakt
+  note.last_reviewed:
+    displayName: Laatst beoordeeld
+  formula.dagen_sinds_review:
+    displayName: Dagen sinds review
+  formula.header_gap:
+    displayName: Header-gap
+views:
+  - type: table
+    name: Bronnen zonder review
+    filters:
+      and:
+        - note.type == "source"
+        - 'note.status == "draft" || !note.last_reviewed'
+    order:
+      - file.name
+      - note.created
+      - note.ai_generator
+      - note.source_kind
+      - note.status
+    sort:
+      - property: note.created
+        direction: ASC
+  - type: table
+    name: Ouder dan 60 dagen
+    filters:
+      and:
+        - 'date(note.last_reviewed) < today() - duration("60d")'
+    order:
+      - file.name
+      - note.last_reviewed
+      - formula.dagen_sinds_review
+      - note.type
+    sort:
+      - property: note.last_reviewed
+        direction: ASC
+  - type: table
+    name: Header-gaps
+    filters:
+      and:
+        - 'formula.header_gap == "ja"'
+    order:
+      - file.name
+      - note.created
+      - note.status
+      - note.type
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Reviews
+    filters:
+      and:
+        - note.record_kind == "review"
+    order:
+      - file.name
+      - note.created
+      - note.case_ids
+      - note.skill_ids
+    sort:
+      - property: note.created
+        direction: DESC
