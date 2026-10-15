@@ -50,7 +50,7 @@ Hans van Leeuwen Identityvoorstel v0.1
 Design · marketplaces · automation Een werkframework in ontwikkeling.
 
 HansOS / 1 / 32
-Het merk
+Het merk
 
 Een werkwijze Hans van Leeuwen
 die ervaring De ervaring. De maker. De
@@ -72,7 +72,7 @@ Full stack beschrijft de scope van het ontwerp. De diagrammen tonen het werkmode
 claim dat ieder platform al geïntegreerd is.
 
 HansOS / 2 / 32
-De ontwerpprincipes
+De ontwerpprincipes
 
 De mens geeft richting.
 Het systeem draagt het werk.
@@ -84,7 +84,7 @@ uitvoering, gebruik en evaluatie. een eigenaar en een uitkomst. blijven verbonde
 De overdrachten tellen mee. Aanpassen krijgt een terugweg. begint met contextcontrole.
 
 HansOS / 3 / 32
-Full stack in samenhang
+Full stack in samenhang
 Intentie
 
 Van intentie
@@ -111,7 +111,7 @@ controle verificatie
 SecondBrainVault curatie / versie / hergebruik
 
 HansOS / 4 / 32
-Het interactieve werkmodel
+Het interactieve werkmodel
 
 De flow wacht
 op jouw oordeel.
@@ -141,7 +141,7 @@ Goedkeuring geldt voor de beoordeelde versie en scope. Release en een geverifiee
 blijven afzonderlijke stappen. Ontbrekend bewijs blijft onbekend.
 
 HansOS / 5 / 32
-SecondBrainVault
+SecondBrainVault
 
 De golden ticket:
 ervaring die bereikbaar blijft.
@@ -171,7 +171,7 @@ Gecureerde kennis groeit door selectie en onderhoud. Dit beschrijft geen automat
 modeltraining of gegarandeerde kwaliteitswinst.
 
 HansOS / 6 / 32
-SecondBrainVault / structuur en track record
+SecondBrainVault / structuur en track record
 
 Drie rollen. Sinds 24 mei 2026 gedocumenteerd in
 
@@ -205,7 +205,7 @@ Bron: vault-labelsysteem-voorstel.md, audit 10 oktober 2026. Drie rollen zijn ee
 ondersteunende mappen. Pi-bevindingen zijn niet opnieuw gecontroleerd voor deze boekeditie.
 
 HansOS / 7 / 32
-Kennisarchitectuur / huidige stand en voorstel
+Kennisarchitectuur / huidige stand en voorstel
 
 Labels zijn nog
 geen leersysteem.
@@ -240,7 +240,7 @@ wijzigingen aan websitefilters. Publicatiecontrole blijft apart; de eerder gesig
 editie niet opnieuw geaudit of gerepareerd.
 
 HansOS / 8 / 32
-Het oorsprongsverhaal / 1 van 3 / blogconcept in Hans' stem
+Het oorsprongsverhaal / 1 van 3 / blogconcept in Hans' stem
 
 Minder opnieuw
 beginnen.
@@ -276,7 +276,7 @@ bevestigd. De professionele ontwikkellijn is redactionele interpretatie. Volledi
 gepubliceerd.
 
 HansOS / 9 / 32
-Het oorsprongsverhaal / 2 van 3 / blogconcept in Hans' stem
+Het oorsprongsverhaal / 2 van 3 / blogconcept in Hans' stem
 
 Menselijke regie.
 Geheugen met context.
@@ -317,7 +317,7 @@ bevestigd. De professionele ontwikkellijn is redactionele interpretatie. Volledi
 gepubliceerd.
 
 HansOS / 10 / 32
-Het oorsprongsverhaal / 3 van 3 / blogconcept in Hans' stem
+Het oorsprongsverhaal / 3 van 3 / blogconcept in Hans' stem
 
 Wat de volgende
 opdracht meeneemt.
@@ -361,7 +361,7 @@ bevestigd. De professionele ontwikkellijn is redactionele interpretatie. Volledi
 gepubliceerd.
 
 HansOS / 11 / 32
-Van vroege chat naar gerichte briefing
+Van vroege chat naar gerichte briefing
 
 Meer scope.
 Meer status.
@@ -392,7 +392,7 @@ middelste voorbeelden komen uit archiefnotities. Dit is een geselecteerde ontwik
 volledige geschiedenis van alle prompts.
 
 HansOS / 12 / 32
-De visuele identiteit
+De visuele identiteit
 
 Een open lus.
 Een duidelijke beslissing.
@@ -432,7 +432,7 @@ Motion Maakt volgorde en terugkoppeling begrijpelijk
 Toegang Focus, labels, pauze, reduced motion en print
 
 HansOS / 13 / 32
-06
+06
 ABS en CCP listing images
 
 Een oplevering
@@ -463,7 +463,7 @@ verstuurde beelden horen, is niet vastgesteld. De voorbeelden zijn Nederlandstal
 claims en publicatie op eBay DE zijn niet gevalideerd.
 
 HansOS / 14 / 32
-Pilotcase / Jowikroon / brand identity + knowledge curation
+Pilotcase / Jowikroon / brand identity + knowledge curation
 
 Een besluit dat 01
 verder reist.
@@ -492,7 +492,7 @@ historische duiding, geen actuele vaultclaim. De documentvolgorde is geen sluite
 nog niet vastgesteld. Geen private artiestencontext overgenomen.
 
 HansOS / 15 / 32
-Pilotcase / LinkedIn / review die een versie verandert
+Pilotcase / LinkedIn / review die een versie verandert
 
 Niet meer opties. 02
 Een betere keuze.
@@ -518,7 +518,7 @@ L1-L4: lokale deliberation-map 2026-09-25-content-engine. Ronde 3, red-team rond
 vergeleken. De mapdatum is geen exacte timestamp per ronde. Geen Fogg-gebruik, modelversie of live effect afgeleid.
 
 HansOS / 16 / 32
-Pilotcase / ABS en CCP / het onzichtbare UX-werk
+Pilotcase / ABS en CCP / het onzichtbare UX-werk
 
 Een productbeeld 03
 is ook een interface.
@@ -556,7 +556,7 @@ claim is niet gevalideerd. Productveiligheid en artikelscope vragen een bevoegde
 niets technisch goed.
 
 HansOS / 17 / 32
-Ordina VR / mijn bijdrage / archiefcase
+Ordina VR / mijn bijdrage / archiefcase
 
 Van concept 04
 naar een wereld.
@@ -587,7 +587,7 @@ bestaande filterkoppeling is VR / Game Design. De jaarwaarde 2021 in de portfoli
 conceptdocumenten hebben 2014-context. Externe publicatie en componentrechten nog te beoordelen.
 
 HansOS / 18 / 32
-Ordina VR / oorspronkelijk conceptdocument / pagina 6
+Ordina VR / oorspronkelijk conceptdocument / pagina 6
 
 De route is
 ook ontwerpwerk.
@@ -615,7 +615,7 @@ bevestigd, afzonderlijke flowbesluiten zijn niet exclusief toegeschreven. De ver
 van nu. Geen bewijs van AI/Fogg-gebruik in 2014 of van iedere functie in de gerealiseerde game.
 
 HansOS / 19 / 32
-Ordina VR / oorspronkelijk conceptdocument / pagina 7
+Ordina VR / oorspronkelijk conceptdocument / pagina 7
 
 Vier afdelingen.
 Vier handelingen.
@@ -630,7 +630,7 @@ eigen renders opgenomen: hun individuele herkomst is niet vastgesteld. Deze pagi
 programmeercredit of gemeten effect. De case verdiept de bestaande categorie zonder websitefilters aan te passen.
 
 HansOS / 20 / 32
-Ontwerppraktijk / voorgesteld reviewprotocol
+Ontwerppraktijk / voorgesteld reviewprotocol
 
 Klopt het?
 Werkt het?
@@ -664,7 +664,7 @@ feitelijke review, gedragsinterpretatie en visueel oordeel. Professionele stemre
 skillbewijs en publicatietoestemming.
 
 HansOS / 21 / 32
-Ontwikkeling / 01 / ICT als fundament
+Ontwikkeling / 01 / ICT als fundament
 
 Eerst begrijpen.
 Dan veranderen.
@@ -691,7 +691,7 @@ geen gerealiseerde oplossing. De wiki bestond al. De koppeling naar HansOS is ee
 bestond hiermee niet aantoonbaar in 2011.
 
 HansOS / 22 / 32
-Ontwikkeling / 02 / Edelman / 2013
+Ontwikkeling / 02 / Edelman / 2013
 
 Vertrouwen
 ontwerpen.
@@ -718,7 +718,7 @@ onafhankelijk gemeten conversie-effect; geen claim dat de complete technische ba
 gescheiden van ArtLab-teamwerk.
 
 HansOS / 23 / 32
-Ontwikkeling / 03 / UX is zichtbaar in de keuzes
+Ontwikkeling / 03 / UX is zichtbaar in de keuzes
 
 Feedback die
 iets verandert.
@@ -744,7 +744,7 @@ persoonlijke prestaties. Testaantallen en enquete-totalen zijn niet overal consi
 gebruik van het BJ Fogg-model is door Hans beschreven; deze historische bronnen bewijzen geen Fogg-rondes in 2014.
 
 HansOS / 24 / 32
-Ontwikkeling / 04 / Ordina / originele renders
+Ontwikkeling / 04 / Ordina / originele renders
 
 Een idee krijgt
 een wereld.
@@ -762,7 +762,7 @@ gebruik op beurzen zijn door Hans bevestigd; exacte beurzen, codebijdrage en rec
 en rechten op componenten vragen afzonderlijke beoordeling.
 
 HansOS / 25 / 32
-Ontwikkeling / 05 / E-commerce als systeem
+Ontwikkeling / 05 / E-commerce als systeem
 
 Productinformatie
 is ook een interface.
@@ -784,7 +784,7 @@ Hans' briefing. Blueprint, implementatie en actueel werkende automation zijn afz
 of handelsresultaten vastgesteld in deze boekbewerking.
 
 HansOS / 26 / 32
-Ontwikkeling / 06 / SecondBrainVault als verbindende laag
+Ontwikkeling / 06 / SecondBrainVault als verbindende laag
 
 Mijn ervaring wordt
 opnieuw bruikbaar.
@@ -811,7 +811,7 @@ onafgebroken werking. De drie rollen zijn functioneel; de volledige driemappenst
 modeltraining, volledige archieflezing of automatische skillbeoordeling geclaimd.
 
 HansOS / 27 / 32
-Het portfolio verdiepen
+Het portfolio verdiepen
 
 Je archief Laat zien wat je deed,
 waarom je het deed
@@ -838,7 +838,7 @@ conceptdiagrammen zijn toegevoegd. Originele FullHD-renders zijn teruggevonden. 
 en externe publicatierechten blijven open. Geen websitefilters gewijzigd.
 
 HansOS / 28 / 32
-De professionele stem
+De professionele stem
 
 Concrete handelingen.
 Controleerbare woorden.
@@ -858,7 +858,7 @@ Nederlands met Engels vakjargon. Geen opgeblazen AI-taal, verzonnen ervaringen o
 percentages. Een declaratieve slotzin.
 
 HansOS / 29 / 32
-Verhalen voor de website
+Verhalen voor de website
 
 Begin bij
 een echte keuze.
@@ -879,7 +879,7 @@ ook het proces zien. laten verschillende delen van hetzelfde werk
 zien.
 
 HansOS / 30 / 32
-Professionele ontwikkeling
+Professionele ontwikkeling
 
 Maak je volgende
 aanpak beter.
@@ -896,7 +896,7 @@ Deze ontwikkeladviezen volgen uit de onderzochte werkwijze en documentatie. Ze z
 volledige beoordeling van alle historische prompts.
 
 HansOS / 31 / 32
-Herkomst en downloads
+Herkomst en downloads
 
 Een verhaal
 met aanknopingspunten.
@@ -938,4 +938,3 @@ Boekeditie 13 oktober 2026
 Identityvoorstel v0.1
 
 HansOS / 32 / 32
-
