@@ -71,3 +71,9 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## MCP servers (Claude Code)
+
+The Apify MCP server is configured project-wide in `.mcp.json`. Export
+`APIFY_API_TOKEN` in your shell before starting Claude Code — see
+[docs/mcp-setup.md](docs/mcp-setup.md).
