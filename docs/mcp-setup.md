@@ -28,13 +28,28 @@ export APIFY_API_TOKEN="apify_api_..."
 Find the token at <https://console.apify.com/settings/integrations> — the
 default one is created on sign-up.
 
-Then verify:
+A project-scoped server needs a one-time approval per checkout, so the first
+listing reports `Pending approval` even when the token is valid:
 
 ```bash
-claude mcp list          # apify should report connected
+claude mcp list
+# apify: https://mcp.apify.com/ (HTTP) - ⏸ Pending approval (run `claude` to approve)
 ```
 
-If the token is missing, the `apify` server fails to connect with an auth error.
+That is the expected first result, not a broken setup. Start `claude` once in
+this directory and approve the server when prompted; after that `claude mcp list`
+reports it connected. `claude mcp get apify` shows which scope and header the
+entry resolved to, which is the quickest way to tell a config problem from a
+missing approval.
+
+If the token is missing, the server reports the endpoint's own auth error rather
+than appearing healthy:
+
+```
+apify (AUTH_HEADER_REJECTED): HTTP 401 — invalid_token:
+Missing or invalid access token.
+```
+
 That is intentional: a silent fallback would look connected while every tool
 call returned 401.
 
@@ -46,14 +61,23 @@ Pick one or the other — an `Authorization` header disables the OAuth fallback.
 
 ### Alternative: user scope instead of project scope
 
-To make Apify available in every project rather than just this one, skip
-`.mcp.json` and register it against your user config:
+To make Apify available in every project rather than just this one, register it
+against your user config under a **different server name**, so it does not
+collide with the `apify` entry this repo commits:
 
 ```bash
-claude mcp add apify "https://mcp.apify.com/" -t http \
+claude mcp add apify-global "https://mcp.apify.com/" -t http \
   --scope user \
   --header "Authorization: Bearer $APIFY_API_TOKEN"
 ```
+
+Reusing the name `apify` instead leaves two definitions competing, and which one
+wins depends on the project entry's approval state — measured in this repo, a
+user-scoped `apify` shadows the project entry while that entry is still pending
+approval, so the project's `${APIFY_API_TOKEN}` header is not what gets used.
+A distinct name avoids having to reason about it. If you would rather not have
+the project entry at all, remove the `apify` block from `.mcp.json` in your
+checkout; `claude mcp add --scope user` does not override a committed file.
 
 Note this writes the resolved token into `~/.claude.json` in plaintext, which
 the `.mcp.json` route avoids.
