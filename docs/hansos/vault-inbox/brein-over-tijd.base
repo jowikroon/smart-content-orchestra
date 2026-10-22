@@ -1,0 +1,79 @@
+# Bestemming: _meta/brein-over-tijd.base  (Obsidian Bases, kern-plugin, 1.14+)
+# Record van het brein over tijd: elke wiki-pagina op frontmatter `created`.
+# Pagina's zonder `created` vallen onderaan en zijn zo zichtbaar als header-gap.
+filters:
+  and:
+    - file.inFolder("wiki")
+    - file.ext == "md"
+formulas:
+  leeftijd_dagen: 'if(note.created, (today() - date(note.created)).days, "")'
+  week: 'if(note.created, date(note.created).format("YYYY-[W]WW"), "zonder created")'
+properties:
+  note.created:
+    displayName: Aangemaakt
+  note.last_reviewed:
+    displayName: Laatst beoordeeld
+  note.record_kind:
+    displayName: Soort
+  note.scope:
+    displayName: Scope
+  note.status:
+    displayName: Status
+  note.ai_generator:
+    displayName: Generator
+  formula.leeftijd_dagen:
+    displayName: Dagen oud
+  formula.week:
+    displayName: Week
+views:
+  - type: table
+    name: Tijdlijn
+    order:
+      - file.name
+      - note.created
+      - note.type
+      - note.record_kind
+      - note.scope
+      - note.status
+      - note.last_reviewed
+      - formula.leeftijd_dagen
+    sort:
+      - property: note.created
+        direction: DESC
+  - type: cards
+    name: Laatste 30 dagen
+    filters:
+      and:
+        - 'date(note.created) >= today() - duration("30d")'
+    order:
+      - file.name
+      - note.created
+      - note.scope
+      - note.ai_generator
+    sort:
+      - property: note.created
+        direction: DESC
+    cardSize: 220
+  - type: table
+    name: Per week
+    groupBy:
+      property: formula.week
+      direction: DESC
+    order:
+      - file.name
+      - note.created
+      - note.record_kind
+    sort:
+      - property: note.created
+        direction: DESC
+  - type: kanban
+    name: Status
+    groupBy:
+      property: note.status
+    order:
+      - file.name
+      - note.created
+      - note.scope
+    sort:
+      - property: note.created
+        direction: DESC
